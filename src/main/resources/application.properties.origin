@@ -1,0 +1,7 @@
+spring.application.name=person-crud
+
+spring.datasource.url=
+spring.datasource.username=
+spring.datasource.password=
+
+app.config.security.clientUrl=
