@@ -14,24 +14,16 @@ import ru.spb.fibricare.api.personcrud.repository.PatientRepository;
 
 @Service
 @Transactional
-public class PatientServiceImpl extends AbstractCrudService<Patient, Long>
+public class PatientServiceImpl extends AbstractPersonCrudService<Patient, Long>
         implements PatientService {
     private final PatientRepository repository;
     private final PatientDtoFactory factory;
-    private final PasswordEncoder passwordEncoder;
 
     public PatientServiceImpl(PatientRepository repository,
             PatientDtoFactory dtoFactory, PasswordEncoder passwordEncoder) {
-        super(repository, repository, dtoFactory);
+        super(repository, repository, dtoFactory, passwordEncoder);
         this.repository = repository;
         this.factory = dtoFactory;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    @Override
-    protected Patient upsert(Patient obj) {
-        obj.setPassword(passwordEncoder.encode(obj.getPassword()));
-        return super.upsert(obj);
     }
 
     @Override

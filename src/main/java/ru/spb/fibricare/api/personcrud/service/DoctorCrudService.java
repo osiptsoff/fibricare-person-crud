@@ -8,18 +8,9 @@ import ru.spb.fibricare.api.personcrud.model.Doctor;
 import ru.spb.fibricare.api.personcrud.repository.DoctorRepository;
 
 @Service
-public class DoctorCrudService extends AbstractCrudService<Doctor, Long> {
-    private final PasswordEncoder passwordEncoder;
-
+public class DoctorCrudService extends AbstractPersonCrudService<Doctor, Long> {
     public DoctorCrudService(DoctorRepository repository,
             DoctorDtoFactory dtoFactory, PasswordEncoder passwordEncoder) {
-        super(repository, repository, dtoFactory);
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    @Override
-    protected Doctor upsert(Doctor obj) {
-        obj.setPassword(passwordEncoder.encode(obj.getPassword()));
-        return super.upsert(obj);
+        super(repository, repository, dtoFactory, passwordEncoder);
     }
 }
