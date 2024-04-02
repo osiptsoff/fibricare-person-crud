@@ -36,7 +36,7 @@ public abstract class AbstractPersonCrudService<T extends User, U> extends Abstr
 
         if(domainObj.getLogin() != null && repository.existsByLogin(domainObj.getLogin())) {
             throw new EntityAlreadyExistsException(
-                domainObj.getClass().getName() + " with given login exists"
+                domainObj.getClass().getSimpleName() + " with given login exists"
             );
         }
 

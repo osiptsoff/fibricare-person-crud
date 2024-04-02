@@ -54,7 +54,7 @@ public class SecurityConfig {
             .formLogin(f -> f.disable())
             .authorizeHttpRequests(auth -> {
                 // TODO: decent security
-                auth.requestMatchers("*").permitAll();
+                auth.anyRequest().permitAll();
             })
             .build();
     }

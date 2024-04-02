@@ -27,9 +27,9 @@ public abstract class AbstractCrudService<T, U> implements CrudService<T, U>, Pa
     public EntityDto<T, U> save(EntityDto<T, U> obj) throws EntityAlreadyExistsException {
         T domainObj = obj.from();
 
-        if(obj.getId() != null && repository.existsById(obj.getId())) {
+        if(obj.getId() != null) {
             throw new EntityAlreadyExistsException(
-                domainObj.getClass().getName() + " with given id exists"
+                "Id must not be assigned"
             );
         }
 
@@ -45,7 +45,7 @@ public abstract class AbstractCrudService<T, U> implements CrudService<T, U>, Pa
         T domainObj = obj.from();
 
         if(obj.getId() == null || !repository.existsById(obj.getId())) {
-            throw new MissingEntityException(domainObj.getClass().getName() + " not found");
+            throw new MissingEntityException(domainObj.getClass().getSimpleName() + " not found");
         }
 
         return obj.fill(upsert(domainObj));

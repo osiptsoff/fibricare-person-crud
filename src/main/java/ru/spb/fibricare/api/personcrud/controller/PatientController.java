@@ -18,6 +18,7 @@ import ru.spb.fibricare.api.personcrud.dto.PatientDto;
 import ru.spb.fibricare.api.personcrud.dto.page.PageDto;
 import ru.spb.fibricare.api.personcrud.dto.page.PageRequestDto;
 import ru.spb.fibricare.api.personcrud.model.Patient;
+import ru.spb.fibricare.api.personcrud.service.PagedReadingService;
 import ru.spb.fibricare.api.personcrud.service.PatientService;
 
 @RestController
@@ -26,15 +27,21 @@ import ru.spb.fibricare.api.personcrud.service.PatientService;
 @Validated
 public class PatientController {
     private final PatientService service;
+    private final PagedReadingService<Patient> prService;
+
+    @GetMapping("")
+    public PageDto<Patient> read(@RequestParam Integer pageNumber, @RequestParam Integer pageSize) {
+        return prService.findPage(new PageRequestDto(pageNumber, pageSize));
+    }
 
     @GetMapping("/{id}")
     public ConvertableDto<Patient> read(@PathVariable Long id) {
         return service.getOneByid(id);
     }
 
-    @GetMapping("")
+    @GetMapping("/of/{doctorId}")
     public PageDto<Patient> readAllByDoctorId(@RequestParam Integer pageNumber,
-            @RequestParam Integer pageSize, @RequestParam Long doctorId) {
+            @RequestParam Integer pageSize, @PathVariable Long doctorId) {
         PageRequestDto pageRequestDto = new PageRequestDto(pageNumber, pageSize);
 
         return service.findAllByDoctorId(pageRequestDto, doctorId);

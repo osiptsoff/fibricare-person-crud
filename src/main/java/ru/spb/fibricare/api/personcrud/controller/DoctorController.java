@@ -8,14 +8,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ru.spb.fibricare.api.personcrud.dto.ConvertableDto;
 import ru.spb.fibricare.api.personcrud.dto.DoctorDto;
+import ru.spb.fibricare.api.personcrud.dto.page.PageDto;
+import ru.spb.fibricare.api.personcrud.dto.page.PageRequestDto;
 import ru.spb.fibricare.api.personcrud.model.Doctor;
 import ru.spb.fibricare.api.personcrud.service.CrudService;
+import ru.spb.fibricare.api.personcrud.service.PagedReadingService;
 
 @RestController
 @RequestMapping("/doctor")
@@ -23,6 +27,12 @@ import ru.spb.fibricare.api.personcrud.service.CrudService;
 @Validated
 public class DoctorController {
     private final CrudService<Doctor, Long> service;
+    private final PagedReadingService<Doctor> prService;
+
+    @GetMapping("")
+    public PageDto<Doctor> read(@RequestParam Integer pageNumber, @RequestParam Integer pageSize) {
+        return prService.findPage(new PageRequestDto(pageNumber, pageSize));
+    }
 
     @GetMapping("/{id}")
     public ConvertableDto<Doctor> read(@PathVariable Long id) {
