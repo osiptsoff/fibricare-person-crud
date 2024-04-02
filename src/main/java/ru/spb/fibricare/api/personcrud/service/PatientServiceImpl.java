@@ -2,6 +2,7 @@ package ru.spb.fibricare.api.personcrud.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -17,12 +18,20 @@ public class PatientServiceImpl extends AbstractCrudService<Patient, Long>
         implements PatientService {
     private final PatientRepository repository;
     private final PatientDtoFactory factory;
+    private final PasswordEncoder passwordEncoder;
 
     public PatientServiceImpl(PatientRepository repository,
-            PatientDtoFactory dtoFactory) {
+            PatientDtoFactory dtoFactory, PasswordEncoder passwordEncoder) {
         super(repository, repository, dtoFactory);
         this.repository = repository;
         this.factory = dtoFactory;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    protected Patient upsert(Patient obj) {
+        obj.setPassword(passwordEncoder.encode(obj.getPassword()));
+        return super.upsert(obj);
     }
 
     @Override
