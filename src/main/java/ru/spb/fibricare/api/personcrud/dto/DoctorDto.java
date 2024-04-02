@@ -2,6 +2,9 @@ package ru.spb.fibricare.api.personcrud.dto;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -14,6 +17,7 @@ import ru.spb.fibricare.api.personcrud.model.Doctor;
 @NoArgsConstructor
 public class DoctorDto implements EntityDto<Doctor, Long> {
     @NotNull
+    @Valid
     private UserDto userInfo;
     @NotBlank
     private String name;
@@ -37,6 +41,7 @@ public class DoctorDto implements EntityDto<Doctor, Long> {
     }
 
     @Override
+    @JsonIgnore
     public Long getId() {
         return this.userInfo.getId();
     }
