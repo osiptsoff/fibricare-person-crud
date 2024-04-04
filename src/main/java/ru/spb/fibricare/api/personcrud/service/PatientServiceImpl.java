@@ -4,8 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.transaction.Transactional;
 import ru.spb.fibricare.api.personcrud.dto.factory.PatientDtoFactory;
 import ru.spb.fibricare.api.personcrud.dto.page.PageDto;
 import ru.spb.fibricare.api.personcrud.dto.page.PageRequestDto;

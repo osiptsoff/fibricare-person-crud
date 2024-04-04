@@ -2,6 +2,8 @@ package ru.spb.fibricare.api.personcrud.service;
 
 import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.repository.CrudRepository;
@@ -13,7 +15,6 @@ import ru.spb.fibricare.api.personcrud.dto.EntityDto;
 import ru.spb.fibricare.api.personcrud.dto.factory.EntityDtoFactory;
 import ru.spb.fibricare.api.personcrud.dto.page.PageDto;
 import ru.spb.fibricare.api.personcrud.dto.page.PageRequestDto;
-import ru.spb.fibricare.api.personcrud.service.exception.EntityAlreadyExistsException;
 import ru.spb.fibricare.api.personcrud.service.exception.MissingEntityException;
 
 @Transactional
@@ -24,11 +25,12 @@ public abstract class AbstractCrudService<T, U> implements CrudService<T, U>, Pa
     protected final EntityDtoFactory<T, U> dtoFactory;
 
     @Override
-    public EntityDto<T, U> save(EntityDto<T, U> obj) throws EntityAlreadyExistsException {
+    public EntityDto<T, U> save(EntityDto<T, U> obj) throws DuplicateKeyException,
+            DataIntegrityViolationException {
         T domainObj = obj.from();
 
         if(obj.getId() != null) {
-            throw new EntityAlreadyExistsException(
+            throw new DuplicateKeyException(
                 "Id must not be assigned"
             );
         }
@@ -41,7 +43,8 @@ public abstract class AbstractCrudService<T, U> implements CrudService<T, U>, Pa
     }
 
     @Override
-    public EntityDto<T, U> update(EntityDto<T, U> obj) throws MissingEntityException {
+    public EntityDto<T, U> update(EntityDto<T, U> obj) throws MissingEntityException,
+            DataIntegrityViolationException {
         T domainObj = obj.from();
 
         if(obj.getId() == null || !repository.existsById(obj.getId())) {
