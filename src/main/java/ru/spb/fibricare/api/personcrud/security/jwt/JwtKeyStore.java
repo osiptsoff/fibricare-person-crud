@@ -11,31 +11,52 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+class KeyDto {
+    private String key;
+}
 
 @Component
 class JwtKeyStore {
     private final String ACCESS_PUBLIC_KEY = "public_access";
 
     private Map<String, Key> keys;
+    @Setter
+    @Value("${app.config.security.keyEndpoint}")
+    private String keyEndpoint;
 
     public JwtKeyStore() {
         keys = new HashMap<>();
     }
 
     @PostConstruct
-    private void initializeKeys() throws InvalidKeySpecException,
-            NullPointerException, IOException, NoSuchAlgorithmException {
-        KeyFactory rsaKeyFactory = KeyFactory.getInstance("RSA");
+    protected void initializeKeys() throws InvalidKeySpecException,
+            NullPointerException, IOException, NoSuchAlgorithmException,
+            RestClientException {
+        var restTemplate = new RestTemplate();
         
-        //rewrite
-        String key = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvIzjXUQohb+wHwBUZOGOfsUkKF4mRsU1VAIdzcp1iyef0ooirNYe8mvTyRMQFevsBfsxidMIe7thcZ39As2fGjI1MgIGQMy2ItfSC/6so8NAVCcXK4oEHgPGfMkbeFJbF+Qfd7SXknRQlKYP1fn+saJt3QT6TMFKJx64+NAb2jU+dvqnSn/KIBRdsKec3VkiBJywvILHQF0P1GpJK/GntxJH4xb/iKeFrlsYlaMtQCeEVHcmX66lqn5KSPq76z/0GMDhFw6Bz2nQiotnYBMnlOpxGvTgyUX7O0WRHhyeufv2vygn6NshCm6HduhYsYmcJm62qh1xivy5j9d884wonwIDAQAB";
+        String encodedKey = restTemplate
+            .getForObject(keyEndpoint, KeyDto.class)
+            .getKey();
         
-        var publicBytes = Base64.getDecoder().decode(key);
-        var pubKeySpec = new X509EncodedKeySpec(publicBytes);
+        var rsaKeyFactory = KeyFactory.getInstance("RSA");
+        var keyBytes = Base64.getDecoder().decode(encodedKey);
+        var pubKeySpec = new X509EncodedKeySpec(keyBytes);
         var pubKey = rsaKeyFactory.generatePublic(pubKeySpec);
+
         keys.put(ACCESS_PUBLIC_KEY, pubKey);
     }
 
