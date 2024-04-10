@@ -2,9 +2,10 @@ package ru.spb.fibricare.api.personcrud.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.transaction.Transactional;
 import ru.spb.fibricare.api.personcrud.dto.factory.PatientDtoFactory;
 import ru.spb.fibricare.api.personcrud.dto.page.PageDto;
 import ru.spb.fibricare.api.personcrud.dto.page.PageRequestDto;
@@ -13,14 +14,14 @@ import ru.spb.fibricare.api.personcrud.repository.PatientRepository;
 
 @Service
 @Transactional
-public class PatientServiceImpl extends AbstractCrudService<Patient, Long>
+public class PatientServiceImpl extends AbstractPersonCrudService<Patient, Long>
         implements PatientService {
     private final PatientRepository repository;
     private final PatientDtoFactory factory;
 
     public PatientServiceImpl(PatientRepository repository,
-            PatientDtoFactory dtoFactory) {
-        super(repository, repository, dtoFactory);
+            PatientDtoFactory dtoFactory, PasswordEncoder passwordEncoder) {
+        super(repository, repository, dtoFactory, passwordEncoder);
         this.repository = repository;
         this.factory = dtoFactory;
     }
